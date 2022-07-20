@@ -1,5 +1,4 @@
 import { createPool } from "mysql2/promise";
-// test
 import {
   DB_HOST,
   DB_USER,
