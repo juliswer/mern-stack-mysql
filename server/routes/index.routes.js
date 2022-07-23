@@ -5,11 +5,12 @@ const router = Router();
 
 router.get("/ping", async (req, res) => {
   try {
-    const result = await pool.query("SELECT 1 + 1 as result");
+    const [rows, result] = await pool.query("SELECT 1 + 1 as result");
 
     res.status(200).json({
       message: "pong",
-      data: result,
+      rows,
+      result,
     });
   } catch (error) {
     console.log(error);
