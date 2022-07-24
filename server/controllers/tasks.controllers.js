@@ -1,5 +1,5 @@
 import { pool } from "../db.js";
-import { errorHandlerInit } from "../error/errorsHandler.js";
+import ApiError from "../error/ApiError.js";
 
 export const getTasks = async (req, res) => {
   try {
@@ -21,9 +21,11 @@ export const getTasks = async (req, res) => {
 
 export const getTask = async (req, res, next) => {
   const { taskId: id } = req.params;
-  if (typeof id !== "number") {
-    errorHandlerInit(req, res, next, "Invalid task id", 400);
-    next();
+  if (!id) {
+    console.log("no id");
+  } else if (typeof id !== "number") {
+    next(ApiError(400, "id must be a number"));
+    return;
   }
   try {
     const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ${id}`);
@@ -38,7 +40,6 @@ export const getTask = async (req, res, next) => {
       error: error.message,
     });
   }
-  res.send("Getting a Task");
 };
 
 export const createTask = async (req, res) => {
