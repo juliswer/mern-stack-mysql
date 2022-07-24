@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { errorHandlerInit } from "../error/errorsHandler.js";
 
 export const getTasks = async (req, res) => {
   try {
@@ -18,16 +19,24 @@ export const getTasks = async (req, res) => {
   }
 };
 
-export const getTask = async (req, res) => {
+export const getTask = async (req, res, next) => {
   const { taskId: id } = req.params;
+  if (typeof id !== "number") {
+    errorHandlerInit(req, res, next, "Invalid task id", 400);
+    next();
+  }
   try {
     const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ${id}`);
-    res.json({
+    res.status(200).json({
       success: true,
       data: result,
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
   res.send("Getting a Task");
 };
