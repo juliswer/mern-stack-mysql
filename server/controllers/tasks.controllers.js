@@ -1,5 +1,4 @@
 import { pool } from "../db.js";
-import ApiError from "../error/ApiError.js";
 
 export const getTasks = async (req, res) => {
   try {
@@ -21,20 +20,25 @@ export const getTasks = async (req, res) => {
 
 export const getTask = async (req, res, next) => {
   const { taskId: id } = req.params;
-  if (!id) {
-    console.log("no id");
-  } else if (typeof id !== "number") {
-    next(ApiError(400, "id must be a number"));
-    return;
-  }
   try {
-    const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ${id}`);
-    res.status(200).json({
-      success: true,
-      data: result,
-    });
+    const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ?`, [id]);
+
+    if (result.length === 0) {
+      res.status(404).json({
+        success: true,
+        message: "Task not found",
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        data: result,
+      });
+    }
   } catch (error) {
     console.log(error);
+    if (typeof id !== "number") {
+      error.message = "ID must be a number";
+    }
     res.status(500).json({
       success: false,
       error: error.message,
@@ -68,6 +72,19 @@ export const updateTask = (req, res) => {
   res.send("Updating a Task");
 };
 
-export const deleteTask = (req, res) => {
-  res.send("Deleting a Task");
+export const deleteTask = async (req, res) => {
+  const { taskId: id } = req.params;
+  try {
+    await pool.query("DELETE FROM tasks WHERE id = ?", [id]);
+    res.status(200).json({
+      success: true,
+      message: "Task Deleted",
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    })
+  }
 };
