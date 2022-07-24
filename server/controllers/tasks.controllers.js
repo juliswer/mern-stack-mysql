@@ -1,10 +1,34 @@
 import { pool } from "../db.js";
 
-export const getTasks = (req, res) => {
-  res.send("Getting Tasks");
+export const getTasks = async (req, res) => {
+  try {
+    const [result] = await pool.query(
+      "SELECT * FROM tasks ORDER BY createdAt ASC"
+    );
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
 
-export const getTask = (req, res) => {
+export const getTask = async (req, res) => {
+  const { taskId: id } = req.params;
+  try {
+    const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ${id}`);
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    console.log(error);
+  }
   res.send("Getting a Task");
 };
 
