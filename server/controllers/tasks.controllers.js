@@ -15,9 +15,10 @@ export const createTask = async (req, res) => {
       "INSERT into tasks(title, description) VALUES (?, ?)",
       [title, description]
     );
+    console.log(result.insertId);
     res.json({
       message: "Task Created",
-      id: result.insertedId,
+      id: result.insertId,
       title,
       description,
     });
