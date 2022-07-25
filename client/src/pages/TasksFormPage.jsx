@@ -20,7 +20,7 @@ function TasksFormPage() {
           actions.resetForm();
         }}
       >
-        {({ handleChange, handleSubmit, values }) => (
+        {({ handleChange, handleSubmit, values, isSubmitting }) => (
           <Form onSubmit={handleSubmit}>
             <label>Title</label>
             <input
@@ -41,7 +41,9 @@ function TasksFormPage() {
               placeholder="Write a description"
             ></textarea>
 
-            <button type="submit">Save</button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
           </Form>
         )}
       </Formik>
