@@ -9,7 +9,7 @@ function TasksFormPage() {
           title: "",
           description: "",
         }}
-        onSubmit={async (values) => {
+        onSubmit={async (values, actions) => {
           console.log(values);
           try {
             const res = await createTaskRequest(values);
@@ -17,9 +17,10 @@ function TasksFormPage() {
           } catch (error) {
             console.log(error);
           }
+          actions.resetForm();
         }}
       >
-        {({ handleChange, handleSubmit }) => (
+        {({ handleChange, handleSubmit, values }) => (
           <Form onSubmit={handleSubmit}>
             <label>Title</label>
             <input
@@ -28,11 +29,13 @@ function TasksFormPage() {
               name="title"
               placeholder="Write a title"
               onChange={handleChange}
+              value={values.title}
             />
 
             <label>Description</label>
             <textarea
               name="description"
+              value={values.description}
               rows="3"
               onChange={handleChange}
               placeholder="Write a description"
