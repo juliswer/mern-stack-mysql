@@ -1,4 +1,5 @@
 import { Form, Formik } from "formik";
+import { createTaskRequest } from "../api/tasks.api";
 
 function TasksFormPage() {
   return (
@@ -8,14 +9,21 @@ function TasksFormPage() {
           title: "",
           description: "",
         }}
-        onSubmit={(values) => {
+        onSubmit={async (values) => {
           console.log(values);
+          try {
+            const res = await createTaskRequest(values);
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
         }}
       >
         {({ handleChange, handleSubmit }) => (
           <Form onSubmit={handleSubmit}>
             <label>Title</label>
             <input
+              autoFocus
               type="text"
               name="title"
               placeholder="Write a title"
@@ -30,7 +38,7 @@ function TasksFormPage() {
               placeholder="Write a description"
             ></textarea>
 
-            <button>Save</button>
+            <button type="submit">Save</button>
           </Form>
         )}
       </Formik>

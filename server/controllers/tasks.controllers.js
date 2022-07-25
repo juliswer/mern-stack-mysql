@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 export const getTasks = async (req, res) => {
   try {
     const [result] = await pool.query(
-      "SELECT * FROM tasks ORDER BY createdAt ASC"
+      "SELECT * FROM tasks ORDER BY createdAt DESC"
     );
     res.status(200).json({
       success: true,
