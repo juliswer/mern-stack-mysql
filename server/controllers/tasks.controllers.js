@@ -75,11 +75,14 @@ export const createTask = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   const { taskId: id } = req.params;
+  
   const { title, description } = req.body;
+
   const bodyUpdatedTask = {
     title,
     description,
   };
+
   try {
     const [result] = await pool.query("UPDATE tasks SET ? WHERE id = ?", [
       bodyUpdatedTask,
