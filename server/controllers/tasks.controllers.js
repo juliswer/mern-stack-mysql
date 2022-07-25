@@ -10,8 +10,7 @@ export const getTasks = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message,
     });
@@ -21,11 +20,22 @@ export const getTasks = async (req, res) => {
 export const getTask = async (req, res, next) => {
   const { taskId: id } = req.params;
   try {
+    const exactId = +id;
+    if (exactId + 1 === id + 1) {
+      exactId = id;
+    } else if (exactId + 1 === `${exactId}1`) {
+      exactId = `${exactId}`;
+    }
+
+    if (isNaN(exactId)) {
+      throw new Error("Task ID must be a number");
+    }
+    
     const [result] = await pool.query(`SELECT * FROM tasks WHERE id = ?`, [id]);
 
     if (result.length === 0) {
       res.status(404).json({
-        success: true,
+        success: false,
         message: "Task not found",
       });
     } else {
@@ -35,11 +45,7 @@ export const getTask = async (req, res, next) => {
       });
     }
   } catch (error) {
-    console.log(error);
-    if (typeof id !== "number") {
-      error.message = "ID must be a number";
-    }
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message,
     });
@@ -53,7 +59,6 @@ export const createTask = async (req, res) => {
       "INSERT into tasks(title, description) VALUES (?, ?)",
       [title, description]
     );
-
     res.json({
       message: "Task Created",
       id: result.insertId,
@@ -61,9 +66,9 @@ export const createTask = async (req, res) => {
       description,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error,
+    return res.status(500).json({
+      success: false,
+      error: error.message,
     });
   }
 };
@@ -91,13 +96,12 @@ export const updateTask = async (req, res) => {
       });
     } else {
       res.status(404).json({
-        success: true,
+        success: false,
         message: "Task not found",
       });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       error: error.message,
     });
@@ -110,7 +114,7 @@ export const deleteTask = async (req, res) => {
     const [result] = await pool.query("DELETE FROM tasks WHERE id = ?", [id]);
     if (result.affectedRows === 0) {
       res.status(404).json({
-        success: true,
+        success: false,
         message: "Task not found",
       });
     } else if (result.affectedRows === 1) {
