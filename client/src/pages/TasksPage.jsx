@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 function TasksPage() {
-  return (
-    <div>TasksPage</div>
-  )
+  return <div>TasksPage</div>;
 }
 
-export default TasksPage
+export default TasksPage;

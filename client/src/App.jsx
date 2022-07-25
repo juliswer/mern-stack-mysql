@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import NotFoundPage from "./pages/NotFoundPage";
 import TasksFormPage from "./pages/TasksFormPage";
 import TasksPage from "./pages/TasksPage";
-import Navbar from './components/NavbarComponent'
+import Navbar from "./components/NavbarComponent";
 
 function App() {
   return (
