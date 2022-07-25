@@ -53,7 +53,7 @@ export const createTask = async (req, res) => {
       "INSERT into tasks(title, description) VALUES (?, ?)",
       [title, description]
     );
-    console.log(result.insertId);
+
     res.json({
       message: "Task Created",
       id: result.insertId,
@@ -68,8 +68,40 @@ export const createTask = async (req, res) => {
   }
 };
 
-export const updateTask = (req, res) => {
-  res.send("Updating a Task");
+export const updateTask = async (req, res) => {
+  const { taskId: id } = req.params;
+  const { title, description } = req.body;
+  const bodyUpdatedTask = {
+    title,
+    description,
+  };
+  try {
+    const [result] = await pool.query("UPDATE tasks SET ? WHERE id = ?", [
+      bodyUpdatedTask,
+      id,
+    ]);
+    if (result.affectedRows === 1 && result.changedRows === 1) {
+      res.status(200).json({
+        success: true,
+        data: result,
+        taskUpdated: {
+          id,
+          bodyUpdatedTask,
+        },
+      });
+    } else {
+      res.status(404).json({
+        success: true,
+        message: "Task not found",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 };
 
 export const deleteTask = async (req, res) => {
