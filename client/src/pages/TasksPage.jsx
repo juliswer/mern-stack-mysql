@@ -1,21 +1,17 @@
 import React from "react";
-import { getTasksRequest } from "../api/tasks.api";
 import TaskComponent from "../components/TaskComponent";
+import { useTasks } from "../hooks/useTasksHook";
 
 function TasksPage() {
-  const [tasks, setTasks] = React.useState([]);
+  const { tasks, loadTasks } = useTasks();
 
   React.useEffect(() => {
-    async function loadTasks() {
-      const res = await getTasksRequest();
-      setTasks(res.data.data);
-    }
     loadTasks();
-  }, []);
+  }, [tasks]);
 
   function renderMain() {
-    if(tasks.length === 0) {
-      return <h1>No tasks yet</h1>
+    if (tasks.length === 0) {
+      return <h1>No tasks yet</h1>;
     }
     return tasks.map((task) => <TaskComponent task={task} key={task.id} />);
   }
