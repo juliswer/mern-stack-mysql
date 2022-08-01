@@ -4,11 +4,8 @@ import TasksFormPage from "./pages/TasksFormPage";
 import TasksPage from "./pages/TasksPage";
 import Navbar from "./components/NavbarComponent";
 import { TaskContextProvider } from "./context/TaskContext";
-import { useEffect } from "react";
-import { useTasks } from "./hooks/useTasksHook";
 
 function App() {
-
   return (
     <TaskContextProvider>
       <Navbar />
