@@ -1,7 +1,32 @@
+import { useState, useEffect } from "react";
 import { Form, Formik } from "formik";
-import { createTaskRequest } from "../api/tasks.api";
+import { createTaskRequest, updateTaskRequest } from "../api/tasks.api";
+import { useParams } from "react-router-dom";
+import { useTasks } from "../hooks/useTasksHook";
 
 function TasksFormPage() {
+  const { taskId } = useParams();
+  const { tasks, loadTasks } = useTasks();
+  const [taskFound, setTaskFound] = useState({});
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  useEffect(() => {
+    if (taskId) {
+      console.log(taskId);
+      console.log(tasks);
+      tasks.map((task) => console.log(task.id));
+      const task = tasks.find((task) => task.id === taskId);
+      console.log(task);
+      if (task) {
+        console.log(task);
+        setTaskFound(task);
+      }
+    }
+  }, [taskId]);
+
   return (
     <>
       <Formik
@@ -12,7 +37,12 @@ function TasksFormPage() {
         onSubmit={async (values, actions) => {
           console.log(values);
           try {
-            const res = await createTaskRequest(values);
+            let res;
+            if (!taskId) {
+              res = await createTaskRequest(values);
+            } else {
+              res = await updateTaskRequest(taskId, values);
+            }
             console.log(res);
           } catch (error) {
             console.log(error);

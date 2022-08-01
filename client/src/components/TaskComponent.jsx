@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { deleteTaskRequest } from "../api/tasks.api";
 
 function TaskComponent({ task }) {
+  const navigate = useNavigate();
   const handleDelete = async () => {
     try {
       await deleteTaskRequest(task.id);
@@ -17,7 +19,7 @@ function TaskComponent({ task }) {
       <span>{task.done === 1 ? "✅" : "❌"}</span>
       <span>{task.createdAt}</span>
       <button onClick={() => handleDelete(task.id)}>Delete</button>
-      <button>Edit</button>
+      <button onClick={() => navigate(`/edit/${task.id}`)}>Edit</button>
     </div>
   );
 }
