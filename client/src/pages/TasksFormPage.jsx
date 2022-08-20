@@ -1,14 +1,45 @@
 import { useState, useEffect } from "react";
 import { Form, Formik } from "formik";
-import { createTaskRequest, updateTaskRequest } from "../api/tasks.api";
+import {
+  createTaskRequest,
+  updateTaskRequest,
+  getTaskRequest,
+} from "../api/tasks.api";
 import { useParams } from "react-router-dom";
 import { useTasks } from "../hooks/useTasksHook";
+import { useMemo } from "react";
 
 function TasksFormPage() {
-  
   const { taskId } = useParams();
-  const { tasks, loadTasks } = useTasks();
+  const { loadTasks } = useTasks();
   const [taskFound, setTaskFound] = useState({});
+  const [initialValues, setInitialValues] = useState({
+    title: "",
+    description: "",
+  });
+
+  const updateValues = (_body) => {
+    if (taskFound) {
+      setInitialValues({
+        title: _body.title,
+        description: _body.description,
+      });
+    } else {
+      setInitialValues({
+        title: "",
+        description: "",
+      });
+    }
+  };
+
+  const getTask = async (_id) => {
+    const task = await getTaskRequest(_id);
+    setTaskFound(task.data.data);
+  };
+
+  useMemo(() => {
+    updateValues(taskFound);
+  }, [taskFound]);
 
   useEffect(() => {
     loadTasks();
@@ -16,25 +47,32 @@ function TasksFormPage() {
 
   useEffect(() => {
     if (taskId) {
-      console.log(taskId);
-      console.log(tasks);
-      tasks.map((task) => console.log(task.id));
-      const task = tasks.find((task) => task.id === taskId);
-      console.log(task);
-      if (task) {
-        console.log(task);
-        setTaskFound(task);
-      }
+      getTask(taskId);
     }
   }, [taskId]);
+
+  useEffect(() => {
+    if (taskFound) {
+      setInitialValues({
+        title: taskFound.title,
+        description: taskFound.description,
+      });
+    } else {
+      setInitialValues({
+        title: "",
+        description: "",
+      });
+    }
+  }, [taskFound]);
 
   return (
     <>
       <Formik
         initialValues={{
-          title: "",
-          description: "",
+          title: initialValues.title,
+          description: initialValues.description,
         }}
+        enableReinitialize={true}
         onSubmit={async (values, actions) => {
           console.log(values);
           try {

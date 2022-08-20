@@ -41,7 +41,7 @@ export const getTask = async (req, res, next) => {
     } else {
       res.status(200).json({
         success: true,
-        data: result,
+        data: result[0],
       });
     }
   } catch (error) {
